@@ -35,7 +35,11 @@ export default {
 		const target = isWebflow ? env.WEBFLOW_URL : env.WORDPRESS_URL;
 
 		// Build the new proxied URL
-		const targetURL = new URL(path + url.search, target);
+		const newURL = `${path}${url.search}`;
+
+		console.log({ newURL, target, env: { WORDPRESS_URL: env.WORDPRESS_URL, WEBFLOW_URL: env.WEBFLOW_URL } });
+
+		const targetURL = new URL(newURL, target);
 
 		// Clone headers, strip hop-by-hop headers
 		const newHeaders = new Headers(request.headers);
