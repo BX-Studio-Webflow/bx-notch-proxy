@@ -11,11 +11,6 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
-interface Env {
-	WEBFLOW_URL: string;
-	OTHER_URL: string;
-}
-
 export default {
 	async fetch(request, env): Promise<Response> {
 		const url = new URL(request.url);
