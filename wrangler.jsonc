@@ -16,16 +16,16 @@
 		  
 		  "vars": {
 			"ENVIRONMENT": "production",
-			"WEBFLOW_URL": "https://your-site.webflow.io",
-			"WORDPRESS_URL": "https://your-wordpress-site.com",
+			"WEBFLOW_URL": "https://ogyzgreen.webflow.io/",
+			"WORDPRESS_URL": "https://wordpress.com/",
 		  },
 		},
 		"development": {
 		  "name": "webflow-wp-proxy",
 		  "vars": {
 			"ENVIRONMENT": "development",
-			"WEBFLOW_URL": "https://your-site.webflow.io",
-			"WORDPRESS_URL": "https://your-wordpress-site.com",
+			"WEBFLOW_URL": "https://ogyzgreen.webflow.io/",
+			"WORDPRESS_URL": "https://wordpress.com/",
 		  },
 		},
 	  },

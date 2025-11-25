@@ -5,6 +5,7 @@
 	"scripts": {
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
+		"build": "wrangler deploy --dry-run",
 		"start": "wrangler dev",
 		"test": "vitest",
 		"lint": "eslint ./src && prettier --check ./src",

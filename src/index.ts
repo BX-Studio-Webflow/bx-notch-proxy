@@ -1,12 +1,12 @@
 /**
  * Welcome to Cloudflare Workers! This is your first worker.
  *
- * - Run `npm run dev` in your terminal to start a development server
+ * - Run `pnpm run dev` in your terminal to start a development server
  * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
+ * - Run `pnpm run deploy` to publish your worker
  *
  * Bind resources to your worker in `wrangler.jsonc`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
+ * `Env` object can be regenerated with `pnpm run cf-typegen`.
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
@@ -20,7 +20,7 @@ export default {
 	async fetch(request, env): Promise<Response> {
 		const url = new URL(request.url);
 
-		// Define priorities
+		// Define webflow routes priorities
 		const WEBFLOW_ROUTES = [
 			'/', // landing page
 			'/blog', // blog index
@@ -35,7 +35,11 @@ export default {
 		const target = isWebflow ? env.WEBFLOW_URL : env.WORDPRESS_URL;
 
 		// Build the new proxied URL
-		const targetURL = new URL(path + url.search, target);
+		const newURL = `${path}${url.search}`;
+
+		console.log({ newURL, target, env: { WORDPRESS_URL: env.WORDPRESS_URL, WEBFLOW_URL: env.WEBFLOW_URL } });
+
+		const targetURL = new URL(newURL, target);
 
 		// Clone headers, strip hop-by-hop headers
 		const newHeaders = new Headers(request.headers);
