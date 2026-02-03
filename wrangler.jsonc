@@ -7,6 +7,9 @@
 	"name": "webflow-wp-proxy",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-11-17",
+	"routes": [
+		"example.com/*"
+	],
 	"observability": {
 		"enabled": true
 	},
@@ -15,16 +18,16 @@
 			"name": "webflow-wp-proxy",
 			"vars": {
 				"ENVIRONMENT": "production",
-				"WEBFLOW_URL": "https://ogyzgreen.webflow.io/",
-				"OTHER_URL": "https://wordpress.com/",
+				"PAGES_URL": "https://mysite.pages.dev/",
+				"WEBFLOW_URL": "https://ogyzgreen.webflow.io/"
 			},
 		},
 		"development": {
 			"name": "webflow-wp-proxy",
 			"vars": {
 				"ENVIRONMENT": "development",
-				"WEBFLOW_URL": "https://ogyzgreen.webflow.io/",
-				"OTHER_URL": "https://wordpress.com/",
+				"PAGES_URL": "https://mysite.pages.dev/",
+				"WEBFLOW_URL": "https://ogyzgreen.webflow.io/"
 			},
 		},
 	},

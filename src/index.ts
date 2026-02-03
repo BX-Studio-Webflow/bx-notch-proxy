@@ -14,45 +14,64 @@
 export default {
 	async fetch(request, env): Promise<Response> {
 		const url = new URL(request.url);
+		const path = url.pathname;
+		const publicOrigin = `${url.protocol}//${url.host}`;
 
-		// Define webflow routes priorities
-		const WEBFLOW_ROUTES = [
-			'/', // landing page
-			'/blog', // blog index
-			'/blog/', // normalized
+		const PAGES_URL = env.PAGES_URL;
+		const WEBFLOW_URL = env.WEBFLOW_URL;
+
+		if (!PAGES_URL || !WEBFLOW_URL) {
+			return new Response('Missing env bindings: PAGES_URL or WEBFLOW_URL', { status: 500 });
+		}
+
+		const isRoot = path === '/';
+		const targetOrigin = isRoot ? PAGES_URL : WEBFLOW_URL;
+		const targetUrl = new URL(path + url.search, targetOrigin);
+
+		const hopByHop = [
+			'connection',
+			'keep-alive',
+			'proxy-authenticate',
+			'proxy-authorization',
+			'te',
+			'trailer',
+			'transfer-encoding',
+			'upgrade',
 		];
 
-		const path = url.pathname;
+		const forwardHeaders = new Headers();
+		for (const [k, v] of request.headers) {
+			if (!hopByHop.includes(k.toLowerCase())) forwardHeaders.set(k, v);
+		}
+		forwardHeaders.set('host', targetUrl.hostname);
 
-		// Check if Webflow route
-		const isWebflow = WEBFLOW_ROUTES.includes(path) || path.startsWith('/blog/');
-
-		const target = isWebflow ? env.WEBFLOW_URL : env.OTHER_URL;
-
-		// Build the new proxied URL
-		const newURL = `${path}${url.search}`;
-
-		console.log({ newURL, target, env: { OTHER_URL: env.OTHER_URL, WEBFLOW_URL: env.WEBFLOW_URL } });
-
-		const targetURL = new URL(newURL, target);
-
-		// Clone headers, strip hop-by-hop headers
-		const newHeaders = new Headers(request.headers);
-		newHeaders.set('host', targetURL.hostname);
-
-		const response = await fetch(targetURL, {
+		const init: RequestInit = {
 			method: request.method,
-			headers: newHeaders,
+			headers: forwardHeaders,
 			body: request.method !== 'GET' && request.method !== 'HEAD' ? request.body : null,
-			redirect: 'follow',
-		});
+			redirect: 'manual',
+		};
 
-		// Ensure correct CORS, security & caching
-		const resHeaders = new Headers(response.headers);
-		resHeaders.set('x-proxy-origin', isWebflow ? 'webflow' : 'wordpress');
+		const upstream = await fetch(targetUrl.toString(), init);
 
-		return new Response(response.body, {
-			status: response.status,
+		const resHeaders = new Headers(upstream.headers);
+		resHeaders.set('x-proxy-origin', isRoot ? 'pages' : 'webflow');
+
+		if (resHeaders.has('location')) {
+			const loc = resHeaders.get('location')!;
+			try {
+				const locUrl = new URL(loc, targetOrigin);
+				if (locUrl.origin === new URL(targetOrigin).origin) {
+					const rewritten = locUrl.href.replace(new URL(targetOrigin).origin, publicOrigin);
+					resHeaders.set('location', rewritten);
+				}
+			} catch (e) {
+				// ignore invalid Location
+			}
+		}
+
+		return new Response(upstream.body, {
+			status: upstream.status,
 			headers: resHeaders,
 		});
 	},
