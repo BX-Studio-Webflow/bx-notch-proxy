@@ -17,8 +17,8 @@ export default {
 		const path = url.pathname;
 		const publicOrigin = `${url.protocol}//${url.host}`;
 
-		const PAGES_URL = env.PAGES_URL;
-		const WEBFLOW_URL = env.WEBFLOW_URL;
+		const { PAGES_URL } = env;
+		const { WEBFLOW_URL } = env;
 
 		if (!PAGES_URL || !WEBFLOW_URL) {
 			return new Response('Missing env bindings: PAGES_URL or WEBFLOW_URL', { status: 500 });
