@@ -4,8 +4,13 @@
 	"private": true,
 	"scripts": {
 		"deploy": "wrangler deploy",
+		"deploy:worker": "wrangler deploy",
+		"deploy:all": "pnpm run deploy:pages && pnpm run deploy",
 		"dev": "wrangler dev",
 		"build": "wrangler deploy --dry-run",
+		"build:frontend": "pnpm --prefix frontend install && pnpm --prefix frontend run build",
+		"pages:dev": "wrangler pages dev ./frontend",
+		"deploy:pages": "wrangler pages publish ./frontend --project-name=notch-pages-project",
 		"start": "wrangler dev",
 		"test": "vitest",
 		"lint": "eslint ./src && prettier --check ./src",

@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "webflow-wp-proxy",
+	"name": "notch-pages-proxy",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-11-17",
 	"routes": [
@@ -13,23 +13,10 @@
 	"observability": {
 		"enabled": true
 	},
-	"env": {
-		"production": {
-			"name": "webflow-wp-proxy",
-			"vars": {
-				"ENVIRONMENT": "production",
-				"PAGES_URL": "https://mysite.pages.dev/",
-				"WEBFLOW_URL": "https://ogyzgreen.webflow.io/"
-			},
-		},
-		"development": {
-			"name": "webflow-wp-proxy",
-			"vars": {
-				"ENVIRONMENT": "development",
-				"PAGES_URL": "https://mysite.pages.dev/",
-				"WEBFLOW_URL": "https://ogyzgreen.webflow.io/"
-			},
-		},
+	"vars": {
+		"ENVIRONMENT": "production",
+		"PAGES_URL": "https://mysite.pages.dev/",
+		"WEBFLOW_URL": "https://bx-notch-staging-05ed2a1ddc7c5d1128abdd.webflow.io/"
 	},
 	/**
 	 * Smart Placement
