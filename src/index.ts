@@ -24,8 +24,17 @@ export default {
 			return new Response('Missing env bindings: PAGES_URL or WEBFLOW_URL', { status: 500 });
 		}
 
-		const isRoot = path === '/';
-		const targetOrigin = isRoot ? PAGES_URL : WEBFLOW_URL;
+		// Serve from Pages for: root, static assets (css, js, images, fonts, documents), and HTML files in frontend
+		const isPagesContent =
+			path === '/' ||
+			path.startsWith('/css/') ||
+			path.startsWith('/js/') ||
+			path.startsWith('/images/') ||
+			path.startsWith('/fonts/') ||
+			path.startsWith('/documents/') ||
+			path.endsWith('.html');
+
+		const targetOrigin = isPagesContent ? PAGES_URL : WEBFLOW_URL;
 		const targetUrl = new URL(path + url.search, targetOrigin);
 
 		const hopByHop = [
@@ -55,7 +64,7 @@ export default {
 		const upstream = await fetch(targetUrl.toString(), init);
 
 		const resHeaders = new Headers(upstream.headers);
-		resHeaders.set('x-proxy-origin', isRoot ? 'pages' : 'webflow');
+		resHeaders.set('x-proxy-origin', isPagesContent ? 'pages' : 'webflow');
 
 		if (resHeaders.has('location')) {
 			const loc = resHeaders.get('location')!;
@@ -66,7 +75,7 @@ export default {
 					resHeaders.set('location', rewritten);
 				}
 			} catch (e) {
-				// ignore invalid Location
+				console.error('Error rewriting location header:', e);
 			}
 		}
 
